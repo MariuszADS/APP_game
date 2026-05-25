@@ -1,4 +1,4 @@
-import Phaser, { GameObjects } from "phaser";
+import Phaser from "phaser";
 import { update, collectStar, hitBomb } from './player'
 
 // type GameProperties = {
@@ -19,7 +19,7 @@ const config = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: { y: 300 ,x:0},
+            gravity: { y: 300, x: 0 },
             debug: false
         }
     },
@@ -35,8 +35,8 @@ let stars: Phaser.Physics.Arcade.Group;
 let bombs: Phaser.Physics.Arcade.Group;
 let platforms: Phaser.Physics.Arcade.StaticGroup;
 let cursors: Phaser.Types.Input.Keyboard.CursorKeys;
-let score: number = 0;
-let gameOver: boolean = false;
+// let score: number = 0;
+// let gameOver: boolean = false;
 let scoreText: Phaser.GameObjects.Text;
 // let null : ;
 
@@ -50,7 +50,7 @@ function preload(this: Phaser.Scene) {
     this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
 }
 
-function create(this: Phaser.Scene,children:GameObjects.) {
+function create(this: Phaser.Scene) {
     //  A simple background for our game
     this.add.image(400, 300, 'sky');
 
@@ -104,17 +104,19 @@ function create(this: Phaser.Scene,children:GameObjects.) {
         setXY: { x: 12, y: 0, stepX: 70 } as Phaser.Types.Math.Vector2Like
     });
 
-    stars.children.iterate(function (child:Phaser.Physics.Arcade.Sprite) {
+    for (const child of stars.getChildren()) {
+        if ("setBounceY" in child) {
+            (child as Phaser.Physics.Arcade.Sprite).setBounceY(Phaser.Math.FloatBetween(0.4, 0.8))
+        }
+    }
 
-        //  Give each star a slightly different bounce
-        child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
 
-    });
+    // stars.children.forEach
 
     bombs = this.physics.add.group();
 
     //  The score
-    scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+    scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000'} as Phaser.Types.GameObjects.Text.TextStyle);
 
     //  Collide the player and the stars with the platforms
     this.physics.add.collider(player, platforms);
@@ -125,6 +127,6 @@ function create(this: Phaser.Scene,children:GameObjects.) {
     this.physics.add.overlap(player, stars, collectStar, undefined, this);
 
     this.physics.add.collider(player, bombs, hitBomb, undefined, this);
-}
+};
 
 // export { scene }
