@@ -1,60 +1,27 @@
-import './App.css'
 import Phaser from 'phaser'
-import { useEffect, useRef } from 'react';
 
-class Example extends Phaser.Scene {
-  preload() {
-    this.load.setBaseURL('https://cdn.phaserfiles.com/v385');
-    this.load.image('sky', 'assets/skies/space3.png');
-    this.load.image('logo', 'assets/sprites/phaser3-logo.png');
-    this.load.image('red', 'assets/particles/red.png');
-  }
-
-  create() {
-    this.add.image(400, 300, 'sky');
-
-    const particles = this.add.particles(0, 0, 'red', {
-      speed: 100,
-      scale: { start: 1, end: 0 },
-      blendMode: 'ADD'
-    });
-
-    const logo = this.physics.add.image(400, 100, 'logo');
-
-    logo.setVelocity(100, 200);
-    logo.setBounce(1, 1);
-    logo.setCollideWorldBounds(true);
-
-    particles.startFollow(logo);
-  }
+const config = {
+  type: Phaser.AUTO,
+  width: 1000,
+  height: 600,
+  // scene: {
+  //   preload: preload,
+  //   create: create,
+  //   update: update
+  // }
 }
 
 
-function GameScene() {
+const game = new Phaser.Game(config)
 
-  const gameRef = useRef<Phaser.Game | null>(null)
-
-  useEffect(() => {
-    const config: Phaser.Types.Core.GameConfig = {
-      type: Phaser.AUTO,
-      width: 800,
-      height: 600,
-      scene: Example,
-      physics: {
-        default: 'arcade',
-        arcade: {
-          gravity: { y: 200 } as Phaser.Types.Math.Vector2Like
-        }
-      }
-    };
-    gameRef.current = new Phaser.Game(config)
-    
-    return ()=>{
-      gameRef.current?.destroy(true)
-    }
-  },[])
-
-  return <div id='game-container'></div>
+function preload(this: Phaser.Scene) {
+  this.load.image("background", "choose from assets")
+  this.load.image("pole", "choose from assets")
+  // this.load.spritesheet("dude","choose from assets") //is this need?
 }
 
-export default GameScene
+function create(this: Phaser.Scene, poles: Phaser.Physics.Arcade.StaticGroup) {
+  this.add.image(500, 500, "background")
+  poles = this.physics.add.staticGroup()
+}
+
